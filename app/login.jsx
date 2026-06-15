@@ -10,11 +10,19 @@ import {
   Platform,
   ScrollView,
   Alert,
+  Image,
 } from "react-native";
 import { router } from "expo-router";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { useAuth } from "../hooks/useAuth";
+
+const CHARACTER_IMAGES = [
+  require("../assets/characters/eleven.png"),
+  require("../assets/characters/mike.png"),
+  require("../assets/characters/dustin.png"),
+  require("../assets/characters/lucas.png"),
+];
 
 export default function LoginScreen() {
   const { login } = useAuth();
@@ -33,12 +41,10 @@ export default function LoginScreen() {
     setLoading(true);
     try {
       await login(username, password);
-      // Vibración de éxito
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      router.replace("/(tabs)/favorites");
+      router.replace("/tabs/favorites");
     } catch (err) {
       setAttempts((a) => a + 1);
-      // Vibración de error (patrón de alerta)
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert(
         "ACCESO DENEGADO",
@@ -57,13 +63,13 @@ export default function LoginScreen() {
         colors={["#050508", "#0A0A0F"]}
         style={StyleSheet.absoluteFill}
       />
+
       <SafeAreaView style={{ flex: 1 }}>
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={{ flex: 1 }}
         >
           <ScrollView contentContainerStyle={styles.content}>
-            {/* Cabecera */}
             <View style={styles.header}>
               <Text style={styles.headerLabel}>LABORATORIO HAWKINS</Text>
               <Text style={styles.headerTitle}>ZONA CLASIFICADA</Text>
@@ -72,7 +78,14 @@ export default function LoginScreen() {
               </Text>
             </View>
 
-            {/* Formulario */}
+            <View style={styles.charactersRow}>
+              {CHARACTER_IMAGES.map((source, index) => (
+                <View key={index} style={styles.characterFrame}>
+                  <Image source={source} style={styles.characterImage} />
+                </View>
+              ))}
+            </View>
+
             <View style={styles.form}>
               <View style={styles.field}>
                 <Text style={styles.label}>IDENTIFICADOR</Text>
@@ -108,7 +121,11 @@ export default function LoginScreen() {
                 disabled={loading}
               >
                 <LinearGradient
-                  colors={loading ? ["#2A2A3F", "#2A2A3F"] : ["#C1121F", "#6B0F1A"]}
+                  colors={
+                    loading
+                      ? ["#2A2A3F", "#2A2A3F"]
+                      : ["#C1121F", "#6B0F1A"]
+                  }
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.loginBtnGradient}
@@ -121,7 +138,8 @@ export default function LoginScreen() {
             </View>
 
             <Text style={styles.hint}>
-              Solo personal autorizado del gobierno.{"\n"}Las intrusiones serán investigadas.
+              Solo personal autorizado del gobierno.{"\n"}
+              Las intrusiones serán investigadas.
             </Text>
           </ScrollView>
         </KeyboardAvoidingView>
@@ -132,26 +150,69 @@ export default function LoginScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#050508" },
-  content: { flexGrow: 1, padding: 24, justifyContent: "center", gap: 32 },
-  header: { alignItems: "center", gap: 8 },
+
+  content: {
+    flexGrow: 1,
+    padding: 24,
+    justifyContent: "center",
+    gap: 24,
+  },
+
+  header: {
+    alignItems: "center",
+    gap: 8,
+  },
+
   headerLabel: {
     fontFamily: "ShareTechMono-Regular",
     fontSize: 10,
     color: "#C1121F",
     letterSpacing: 3,
   },
+
   headerTitle: {
     fontFamily: "BentonSans-Bold",
-    fontSize: 28,
+    fontSize: 27,
     color: "#E8E8F0",
-    letterSpacing: 4,
+    letterSpacing: 3,
+    textAlign: "center",
   },
+
   headerSub: {
     fontFamily: "ShareTechMono-Regular",
     fontSize: 11,
     color: "#7B7B9A",
     letterSpacing: 1,
+    textAlign: "center",
   },
+
+  charactersRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 10,
+  },
+
+  characterFrame: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    borderWidth: 1.5,
+    borderColor: "#C1121F",
+    backgroundColor: "#12121A",
+    overflow: "hidden",
+    shadowColor: "#C1121F",
+    shadowOpacity: 0.45,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 0 },
+  },
+
+  characterImage: {
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover",
+  },
+
   form: {
     gap: 16,
     backgroundColor: "#12121A",
@@ -160,13 +221,16 @@ const styles = StyleSheet.create({
     borderColor: "#2A2A3F",
     padding: 20,
   },
+
   field: { gap: 6 },
+
   label: {
     fontFamily: "ShareTechMono-Regular",
     fontSize: 10,
     color: "#7B7B9A",
     letterSpacing: 2,
   },
+
   input: {
     backgroundColor: "#0A0A0F",
     borderWidth: 1,
@@ -178,14 +242,25 @@ const styles = StyleSheet.create({
     fontFamily: "Montserrat-Regular",
     fontSize: 15,
   },
-  loginBtn: { borderRadius: 4, overflow: "hidden", marginTop: 8 },
-  loginBtnGradient: { paddingVertical: 15, alignItems: "center" },
+
+  loginBtn: {
+    borderRadius: 4,
+    overflow: "hidden",
+    marginTop: 8,
+  },
+
+  loginBtnGradient: {
+    paddingVertical: 15,
+    alignItems: "center",
+  },
+
   loginBtnText: {
     fontFamily: "BentonSans-Bold",
     fontSize: 13,
     color: "#E8E8F0",
     letterSpacing: 3,
   },
+
   hint: {
     fontFamily: "ShareTechMono-Regular",
     fontSize: 10,

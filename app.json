@@ -7,15 +7,18 @@
     "icon": "./assets/icon.png",
     "scheme": "stcompanion",
     "userInterfaceStyle": "dark",
+
     "splash": {
       "image": "./assets/splash.png",
-      "resizeMode": "contain",
+      "resizeMode": "cover",
       "backgroundColor": "#0A0A0F"
     },
+
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.unir.stcompanion"
     },
+
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
@@ -23,10 +26,12 @@
       },
       "package": "com.unir.stcompanion"
     },
+
     "plugins": [
       "expo-router",
       "expo-font"
     ],
+
     "experiments": {
       "typedRoutes": true
     }

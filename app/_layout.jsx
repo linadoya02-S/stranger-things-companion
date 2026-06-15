@@ -17,7 +17,7 @@ export default function RootLayout() {
     // Fuente 2: Montserrat Regular - cuerpo limpio y legible
     "Montserrat-Regular": require("../assets/fonts/Montserrat-Regular.ttf"),
     // Fuente 3 (extra): Share Tech Mono - para datos técnicos/etiquetas
-    "ShareTechMono-Regular": require("../assets/fonts/ShareTechMono-Regular.ttf"),
+    "ShareTechMono-Regular": require("../assets/fonts/Share-TechMono.ttf"),
   });
 
   useEffect(() => {
@@ -51,7 +51,7 @@ export default function RootLayout() {
           options={{ title: "ACCESO CLASIFICADO", headerBackTitle: "" }}
         />
         {/* Tabs app */}
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="tabs" options={{ headerShown: false }} />
         {/* Detalles de personaje */}
         <Stack.Screen
           name="character/[id]"

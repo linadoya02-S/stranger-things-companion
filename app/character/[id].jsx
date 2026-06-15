@@ -1,6 +1,6 @@
 import React from "react";
-import { ScrollView, View, Text } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { ScrollView, View, Text, Pressable } from "react-native";
+import { useLocalSearchParams, router } from "expo-router";
 
 import { api } from "../../services/mockData";
 import { useFetch } from "../../hooks/useFetch";
@@ -21,12 +21,29 @@ export default function CharacterDetailScreen() {
     refetch,
   } = useFetch(() => api.getCharacter(id), [id]);
 
+  const handleBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace("/tabs/favorites");
+    }
+  };
+
   if (loading) return <Loader message="Cargando personaje..." />;
   if (error) return <ErrorBox message={error} onRetry={refetch} />;
   if (!data) return <ErrorBox message="Personaje no encontrado" />;
 
   return (
     <ScrollView className="flex-1 bg-st-dark p-4">
+      <Pressable
+        onPress={handleBack}
+        className="border border-st-border rounded py-3 px-4 mb-4"
+      >
+        <Text className="text-st-muted font-st-mono tracking-widest">
+          ← VOLVER
+        </Text>
+      </Pressable>
+
       <GradientCard style={{ padding: 20 }}>
         <Text className="text-st-text text-3xl font-st-title tracking-widest">
           {data.name}
@@ -77,6 +94,8 @@ export default function CharacterDetailScreen() {
           </>
         )}
       </GradientCard>
+
+      <View className="h-10" />
     </ScrollView>
   );
 }

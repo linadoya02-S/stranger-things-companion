@@ -7,18 +7,35 @@ import {
   Pressable,
   StyleSheet,
   SafeAreaView,
+  Image,
 } from "react-native";
 import { router } from "expo-router";
 import * as Haptics from "expo-haptics";
-import { api } from "../../api/mockData";
+import { api } from "../../services/mockData";
 import { useFetch } from "../../hooks/useFetch";
-import { Loader, ErrorBox, SectionTitle } from "../../components/ui";
+import { SectionTitle } from "../../components/ui";
 
 const QUICK_LINKS = [
-  { label: "Personajes", icon: "👥", route: "/characters" },
-  { label: "Criaturas", icon: "👾", route: "/creatures" },
-  { label: "Lugares", icon: "🗺️", route: "/locations" },
-  { label: "Temporadas", icon: "🎬", route: "/seasons" },
+  {
+    label: "Personajes",
+    icon: require("../../assets/icons/characters.png"),
+    route: "/tabs/characters",
+  },
+  {
+    label: "Criaturas",
+    icon: require("../../assets/icons/creatures.png"),
+    route: "/tabs/creatures",
+  },
+  {
+    label: "Lugares",
+    icon: require("../../assets/icons/locations.png"),
+    route: "/tabs/locations",
+  },
+  {
+    label: "Temporadas",
+    icon: require("../../assets/icons/seasons.png"),
+    route: "/tabs/seasons",
+  },
 ];
 
 const FACTS = [
@@ -26,7 +43,7 @@ const FACTS = [
   "El Mundo del Revés es una dimensión paralela oscura y desolada.",
   "Eleven fue criada en el Laboratorio Nacional de Hawkins.",
   "El número 11 (Eleven) fue tatuado en el antebrazo de Jane.",
-  'Kate Bush experimentó un resurgimiento de popularidad por la T4.',
+  "Kate Bush experimentó un resurgimiento de popularidad por la T4.",
 ];
 
 export default function HomeTab() {
@@ -57,14 +74,14 @@ export default function HomeTab() {
   return (
     <SafeAreaView style={styles.safe}>
       <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
-        {/* Cabecera */}
         <View style={styles.header}>
-          <Text style={styles.headerSub}>ARCHIVO HAWKINS · {new Date().getFullYear()}</Text>
+          <Text style={styles.headerSub}>
+            ARCHIVO HAWKINS · {new Date().getFullYear()}
+          </Text>
           <Text style={styles.headerTitle}>STRANGER{"\n"}THINGS</Text>
           <Text style={styles.headerCompanion}>COMPANION APP</Text>
         </View>
 
-        {/* Buscador */}
         <View style={styles.searchRow}>
           <TextInput
             style={styles.searchInput}
@@ -75,15 +92,11 @@ export default function HomeTab() {
             onSubmitEditing={handleSearch}
             returnKeyType="search"
           />
-          <Pressable
-            style={styles.searchBtn}
-            onPress={query ? handleSearch : undefined}
-          >
+          <Pressable style={styles.searchBtn} onPress={handleSearch}>
             <Text style={styles.searchBtnText}>{searching ? "..." : "🔍"}</Text>
           </Pressable>
         </View>
 
-        {/* Resultados de búsqueda */}
         {searchResults && (
           <View style={styles.section}>
             <View style={styles.searchResultsHeader}>
@@ -92,6 +105,7 @@ export default function HomeTab() {
                 <Text style={styles.clearText}>✕ Limpiar</Text>
               </Pressable>
             </View>
+
             {searchResults.characters.length === 0 &&
             searchResults.creatures.length === 0 &&
             searchResults.locations.length === 0 ? (
@@ -108,6 +122,7 @@ export default function HomeTab() {
                     <Text style={styles.resultName}>{c.name}</Text>
                   </Pressable>
                 ))}
+
                 {searchResults.creatures.map((c) => (
                   <Pressable
                     key={`cre-${c.id}`}
@@ -118,6 +133,7 @@ export default function HomeTab() {
                     <Text style={styles.resultName}>{c.name}</Text>
                   </Pressable>
                 ))}
+
                 {searchResults.locations.map((l) => (
                   <View key={`loc-${l.id}`} style={styles.resultItem}>
                     <Text style={styles.resultType}>LUGAR</Text>
@@ -129,8 +145,8 @@ export default function HomeTab() {
           </View>
         )}
 
-        {/* Accesos rápidos */}
         <SectionTitle text="EXPLORAR" />
+
         <View style={styles.quickLinks}>
           {QUICK_LINKS.map((link) => (
             <Pressable
@@ -141,13 +157,12 @@ export default function HomeTab() {
               ]}
               onPress={() => navigate(link.route)}
             >
-              <Text style={styles.quickIcon}>{link.icon}</Text>
+              <Image source={link.icon} style={styles.quickImage} />
               <Text style={styles.quickLabel}>{link.label}</Text>
             </Pressable>
           ))}
         </View>
 
-        {/* Temporadas recientes */}
         {seasons && (
           <>
             <SectionTitle text="TEMPORADAS" />
@@ -161,22 +176,24 @@ export default function HomeTab() {
                   <Text style={styles.seasonYear}>{s.year}</Text>
                   <Text style={styles.seasonTitle}>{s.title.toUpperCase()}</Text>
                   <Text style={styles.seasonEnemy}>vs. {s.mainEnemy}</Text>
-                  <Text style={styles.seasonEpisodes}>{s.episodes} eps · ⭐ {s.rating}</Text>
+                  <Text style={styles.seasonEpisodes}>
+                    {s.episodes} eps · ⭐ {s.rating}
+                  </Text>
                 </View>
               ))}
             </ScrollView>
           </>
         )}
 
-        {/* Datos curiosos */}
         <SectionTitle text="DATO CLASIFICADO" />
+
         <View style={styles.factBox}>
           <Text style={styles.factText}>
             {FACTS[Math.floor(Math.random() * FACTS.length)]}
           </Text>
         </View>
 
-        <View style={{ height: 24 }} />
+        <View style={{ height: 90 }} />
       </ScrollView>
     </SafeAreaView>
   );
@@ -287,26 +304,31 @@ const styles = StyleSheet.create({
   quickLinks: {
     flexDirection: "row",
     flexWrap: "wrap",
-    paddingHorizontal: 16,
-    gap: 10,
+    justifyContent: "space-between",
+    paddingHorizontal: 28,
+    rowGap: 18,
+    marginBottom: 8,
   },
   quickCard: {
-    width: "47%",
-    backgroundColor: "#12121A",
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#2A2A3F",
-    padding: 20,
+    width: "45%",
+    backgroundColor: "transparent",
     alignItems: "center",
-    gap: 8,
   },
-  quickCardPressed: { backgroundColor: "#1A1A27", borderColor: "#C1121F" },
-  quickIcon: { fontSize: 28 },
+  quickCardPressed: {
+    opacity: 0.7,
+  },
+  quickImage: {
+    width: 115,
+    height: 115,
+    resizeMode: "contain",
+  },
   quickLabel: {
     fontFamily: "BentonSans-Bold",
-    fontSize: 12,
+    fontSize: 15,
     color: "#E8E8F0",
-    letterSpacing: 2,
+    letterSpacing: 3,
+    textAlign: "center",
+    marginTop: 4,
   },
   seasonsRow: { paddingHorizontal: 16, gap: 12 },
   seasonCard: {
